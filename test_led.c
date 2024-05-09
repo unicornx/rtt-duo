@@ -30,7 +30,7 @@ int led_off(void)
 }
 
 
-void led_test(){
+void test_led(){
     led_init();
     rt_thread_mdelay(1000);
     rt_kprintf("LED ON\n");
