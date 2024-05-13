@@ -16,6 +16,9 @@ if GetDepend('BSP_USING_WDT'):
 if GetDepend('BSP_USING_ADC'):
     src += ['test_adc.c']
 
+if GetDepend('BSP_USING_SPI'):
+    src += ['test_spi.c']
+
 CPPPATH = [cwd]
 
 group = DefineGroup('Test', src, depend = [''], CPPPATH = CPPPATH)
