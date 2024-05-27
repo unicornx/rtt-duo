@@ -3,9 +3,16 @@
 
 static rt_base_t pinno;
 
+/* Onboard LED pins */
+#if defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+#define LED_PIN     "E02"
+#elif defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+#define LED_PIN     "C24"
+#endif
+
 static int led_init(void)
 {
-    pinno = rt_pin_get("C24");
+    pinno = rt_pin_get(LED_PIN);
     rt_kprintf("pin number is: %d\n", pinno);
 
     rt_pin_mode(pinno, PIN_MODE_OUTPUT);
