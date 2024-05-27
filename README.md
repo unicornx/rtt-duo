@@ -16,7 +16,7 @@
 cd $YOUR_WORKSPACE
 git@github.com:unicornx/rt-thread.git
 cd rt-thread
-git checkout rtt-duo
+git checkout rtt-duo-v5.1.0
 git submodule init
 git submodule update
 ```
