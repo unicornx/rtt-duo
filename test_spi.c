@@ -3,9 +3,22 @@
 /*
  * 程序清单：这是一个 SPI 设备使用例程
  * 例程导出了 test_spi 命令到控制终端
- * 命令调用格式：test_spi 
- * 命令解释：
- * 程序功能：
+ * 命令调用格式: test_spi 
+ * 命令解释:
+ * 程序功能: 该实验将发送 8 个字节数据，通过 loopback 方式，从 SDO -> SDI
+ * 硬件连接: 使用杜邦线连接 duo/duo256 开发板上 SPI2 的 SDO 与 SDI。
+ * 编译说明：首先通过 scons --menuconfig 使能 SPI2 并配置 SPI 的管脚
+ * ```shell
+ * $ scons --menuconfig
+ * General Drivers Configuration  --->
+ *     [*] Enable SPI 2
+ *     (SD1_CLK) spi2 sck pin name
+ *     (SD1_CMD) spi2 sdo pin name
+ *     (SD1_D0) spi2 sdi pin name
+ *     (SD1_D3) spi2 cs pin name
+ * ```
+ * 配置完成后再运行 scons 进行编译即可
+ * 设备上电后正常启动，并进入 msh 命令行，运行 test_spi
  */
 
 #include <rtthread.h>
@@ -16,28 +29,13 @@
 
 static struct rt_spi_device *spi_dev = RT_NULL;
 
-/* spi loopback mode test case */
-static int spi_sample(int argc, char *argv[])
+static int test_spi(void)
 {
     rt_err_t ret;
     struct rt_spi_configuration cfg;
-    rt_uint8_t t_buf[8] = {1, 2, 3, 4, 5, 6, 7, 8}, r_buf[8];
+    rt_uint8_t t_buf[8] = {1, 2, 3, 4, 5, 6, 7, 8}, r_buf[8] = {0};
     int i = 0;
     static struct rt_spi_message msg1;
-
-#if 0
-    if (argc != 9)
-    {
-        rt_kprintf("Please Usage:\n");
-        rt_kprintf("spi_sample 1 2 3 4 5 6 7 8\n");
-        return -RT_ERROR;
-    }
-
-    for (i = 0; i < 8; i++)
-    {
-        t_buf[i] = atoi(argv[i+1]);
-    }
-#endif
 
     /* attach the device to spi bus*/
     spi_dev = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
@@ -63,16 +61,24 @@ static int spi_sample(int argc, char *argv[])
     msg1.cs_release = 0;
     msg1.next       = RT_NULL;
 
-    rt_spi_transfer_message(spi_dev, &msg1);
-
-    rt_kprintf("spi rbuf : ");
+    rt_kprintf("Before transfer, rbuf : ");
     for (i = 0; i < sizeof(t_buf); i++)
     {
-        rt_kprintf("%x ", r_buf[i]);
+        rt_kprintf("%d ", r_buf[i]);
     }
+    rt_kprintf("\n");
 
-    rt_kprintf("\nspi loopback mode test over!\n");
+    rt_spi_transfer_message(spi_dev, &msg1);
+
+    rt_kprintf("After transfer, rbuf : ");
+    for (i = 0; i < sizeof(t_buf); i++)
+    {
+        rt_kprintf("%d ", r_buf[i]);
+    }
+    rt_kprintf("\n");
+
+    rt_kprintf("SPI loopback test is done!\n");
 
     return RT_EOK;
 }
-MSH_CMD_EXPORT(spi_sample, spi loopback test);
+MSH_CMD_EXPORT(test_spi, spi loopback test);
