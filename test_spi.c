@@ -27,18 +27,14 @@
 #define BUS_NAME     "spi2"
 #define SPI_NAME     "spi20"
 
-static struct rt_spi_device *spi_dev = RT_NULL;
-
-static int test_spi(void)
+/* attach spi5 device, 该函数只会在系统化初始阶段执行一次 */
+static int rt_spi_device_init(void)
 {
     rt_err_t ret;
     struct rt_spi_configuration cfg;
-    rt_uint8_t t_buf[8] = {1, 2, 3, 4, 5, 6, 7, 8}, r_buf[8] = {0};
-    int i = 0;
-    static struct rt_spi_message msg1;
 
     /* attach the device to spi bus*/
-    spi_dev = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
+    struct rt_spi_device *spi_dev = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_dev != RT_NULL);
 
     /* initialize the cs pin */
@@ -53,6 +49,24 @@ static int test_spi(void)
     cfg.mode   = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB | RT_SPI_NO_CS;
     cfg.max_hz = 10 *1000 *1000;
     rt_spi_configure(spi_dev, &cfg);
+
+    return RT_EOK;
+}
+INIT_APP_EXPORT(rt_spi_device_init);
+
+static int test_spi(void)
+{
+    rt_uint8_t t_buf[8] = {1, 2, 3, 4, 5, 6, 7, 8}, r_buf[8] = {0};
+    int i;
+    static struct rt_spi_message msg1;
+
+    struct rt_spi_device *spi_dev = (struct rt_spi_device *)rt_device_find(SPI_NAME);
+
+    if (RT_NULL == spi_dev)
+    {
+        rt_kprintf("spi sample run failed! can't find %s device!\n", SPI_NAME);
+        return -RT_ERROR;
+    }
 
     msg1.send_buf   = &t_buf;
     msg1.recv_buf   = &r_buf;
