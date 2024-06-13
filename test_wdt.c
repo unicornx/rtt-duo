@@ -32,7 +32,7 @@ static void test_wdt(int argc, char *argv[])
     rt_err_t ret = RT_EOK;
     int flag_feed = 0; /* 默认不喂狗 */
 
-    rt_uint32_t timeout = 3000; /* 溢出时间，单位为 ms */
+    rt_uint32_t timeout = 3; /* 溢出时间，单位为 s */
 
     rt_kprintf("Running Watchdog Timer test!\n");
 
@@ -84,7 +84,7 @@ static void test_wdt(int argc, char *argv[])
     }
 
     /* 延迟足够时间，看看系统会不会被看门狗重启 */
-    rt_thread_mdelay(2 * timeout);
+    rt_thread_mdelay(2 * timeout * 1000);
 
     /* 如果喂狗成功，还有机会走到这里关闭关门狗 */
     rt_device_close(wdg_dev);
