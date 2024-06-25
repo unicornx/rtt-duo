@@ -5,6 +5,7 @@ src = Split('''
     test_main.c
     test_gpio.c
     test_timer.c
+    test_math.c
 ''')
 
 if GetDepend('BSP_USING_PWM'):
