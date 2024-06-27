@@ -14,7 +14,7 @@
 
 ```bash
 cd $YOUR_WORKSPACE
-git@github.com:unicornx/rt-thread.git
+git clone git@github.com:unicornx/rt-thread.git
 cd rt-thread
 git checkout rtt-duo-v5.1.0
 git submodule init
@@ -22,6 +22,8 @@ git submodule update
 ```
 
 测试用例的代码在 `$YOUR_WORKSPACE/rt-thread/bsp/cvitek/cv18xx_risc-v/applications/test/` 下。
+
+注意，如果你访问 github 比较慢，也可以从本仓库在 gitee 的 mirror 下载，地址是：`git@gitee.com:unicornx/rt-thread.git`。
 
 ## 下载和配置编译工具链
 
